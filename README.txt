@@ -15,7 +15,9 @@ index - экшн actionIndex()
 
 
 
-//MVC
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////MVC//////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //Контроллер - controllers/SiteController.php
 //http://localhost:8888/index.php?r=site/hello&name=vasya
 public function actionHello($name = "World")
@@ -33,7 +35,9 @@ public function actionHello($name = "World")
 
 
 
-//Forms
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////FORMS//////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //controllers/SiteController.php
 public function actionForm()
 {
@@ -91,3 +95,170 @@ use yii\helpers\Html;
 
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////Active Record///////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//http://localhost:8888/index.php?r=site/comments
+//controllers/SiteController.php
+public function actionComments()
+{
+
+    $comments = \app\models\Comments::find()->all();
+
+    return $this->render('comments', [
+        'comments' => $comments,
+    ]);
+}
+
+//models/Comments.php //файл назван как таблица в бд
+namespace app\models;
+use yii\db\ActiveRecord;
+class Comments extends ActiveRecord{}
+
+//views/site/comments.php
+<h1>Комментарии</h1>
+<ul>
+<?php foreach($comments as $comment){ ?>
+    <li><b><?= $comment->name; ?>:</b> <?= $comment->text; ?></li>
+<?php } ?>
+</ul>
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////////Paginator/////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//http://localhost:8888/index.php?r=site/paginator
+//controllers/SiteController.php
+public function actionPaginator()
+{
+
+    $comments = \app\models\Comments::find();
+
+    $pagination = new \yii\data\Pagination([
+        'defaultPageSize' => 2,
+        'totalCount' => $comments->count(),
+    ]);
+
+    $comments = $comments
+        ->offset($pagination->offset)
+        ->limit($pagination->limit)
+        ->all();
+
+    return $this->render('paginator', [
+        'comments' => $comments,
+        'pagination' => $pagination,
+    ]);
+}
+
+
+//views/site/paginator.php
+<?php
+use yii\widgets\LinkPager;
+?>
+<h1>Комментарии</h1>
+<ul>
+<?php foreach($comments as $comment){ ?>
+    <li><b><?= $comment->name; ?>:</b> <?= $comment->text; ?></li>
+<?php } ?>
+</ul>
+<?= LinkPager::widget(['pagination' => $pagination]); ?>
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////LINK////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//config/web.php
+'urlManager' => [
+    'enablePrettyUrl' => true,
+    'showScriptName' => false,
+    'rules' => [
+        'about' => 'site/about'
+    ],
+],
+
+//Ссылка
+http://localhost:8888/index.php?r=site/user&name=Вася
+<?= Yii::$app->urlManager->createUrl(['site/user', 'name' => $comment->name]); ?>
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////Параметры//////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+$name = yii::$app->request->get('name'); //null по умолчанию
+//$name = yii::$app->request->post('name');
+//$name = yii::$app->request->post('name', false); //false по умолчанию
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////Сессии///////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+$session = yii::$app->session;
+$session->set('name', $name);
+$session->remove('name');
+$session->get('name');
+$session->has('name');
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////КУКИ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//Записать значение в куку пользователя
+$cookies = Yii::$app->response->cookies;
+$cookies->add(new \yii\web\Cookie([
+    'name' => 'name',
+    'value' => $name,
+]));
+//Удалить куки
+$cookies->remove('name');
+
+//Получить значение кук браузера
+$cookies = Yii::$app->request->cookies;
+$value = $cookies->getValue('name');
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////ВИДЖЕТ///////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//Виджет - визуальный блок на сайте
+//http://localhost:8888/index.php?r=site/widget
+//components/Hello.php
+<?php
+namespace app\components;
+use yii\base\Widget;
+use yii\helpers\Html;
+class Hello extends Widget
+{
+    public $message;
+    public function run()
+    {
+        $b = Html::tag('b', $this->message);
+        $p = Html::tag('p', $b);
+        return $p;
+    }
+}
+
+//views/site/widget.php
+<?php
+use app\components\Hello;
+?>
+<h1><?= Hello::widget(['message' => 'Hello, World!']); ?></h1>

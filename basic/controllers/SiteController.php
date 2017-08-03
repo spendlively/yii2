@@ -152,4 +152,105 @@ class SiteController extends Controller
             'email' => $email,
         ]);
     }
+
+    public function actionComments()
+    {
+
+        $comments = \app\models\Comments::find()->all();
+
+        return $this->render('comments', [
+            'comments' => $comments,
+        ]);
+    }
+
+    public function actionPaginator()
+    {
+
+        $comments = \app\models\Comments::find();
+
+        $pagination = new \yii\data\Pagination([
+            'defaultPageSize' => 2,
+            'totalCount' => $comments->count(),
+        ]);
+
+        $comments = $comments
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        return $this->render('paginator', [
+            'comments' => $comments,
+            'pagination' => $pagination,
+        ]);
+    }
+
+    public function actionLink()
+    {
+
+        $comments = \app\models\Comments::find();
+
+        $pagination = new \yii\data\Pagination([
+            'defaultPageSize' => 2,
+            'totalCount' => $comments->count(),
+        ]);
+
+        $comments = $comments
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        return $this->render('link', [
+            'comments' => $comments,
+            'pagination' => $pagination,
+        ]);
+    }
+
+    public function actionUser()
+    {
+
+        $name = yii::$app->request->get('name'); //null по умолчанию
+
+        return $this->render('user', [
+            'name' => $name,
+        ]);
+    }
+
+    public function actionSession()
+    {
+
+        $name = yii::$app->request->get('name');
+
+        //Сессию не надо открывать вручную
+        $session = yii::$app->session;
+        $session->set('name', $name);
+//        $session->remove('name');
+//        $session->get('name');
+
+        var_dump($session->get('name'));die();
+    }
+
+    public function actionCookies()
+    {
+
+        $name = yii::$app->request->get('name');
+
+        //Записать значение в куку пользователя
+        $cookies = Yii::$app->response->cookies;
+        $cookies->add(new \yii\web\Cookie([
+            'name' => 'name',
+            'value' => $name,
+        ]));
+        //Удалить куки
+//        $cookies->remove('name');
+
+        //Получить значение кук браузера
+        $cookies = Yii::$app->request->cookies;
+        $value = $cookies->getValue('name');
+        var_dump($value);
+    }
+
+    public function actionWidget()
+    {
+        return $this->render('widget');
+    }
 }
