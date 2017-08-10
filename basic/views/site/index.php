@@ -50,4 +50,6 @@ $this->title = 'My Yii Application';
         </div>
 
     </div>
+
+    <a href="<?= Yii::$app->urlManager->createUrl(['site/sef']); ?>">Ссылка для проверки ЧПУ</a>
 </div>

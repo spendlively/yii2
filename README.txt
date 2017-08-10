@@ -1,15 +1,12 @@
 
-//Установка
-В файле config/web.php заполняем конфиг cookieValidationKey
-
-
-
-
-
-//URL
-http://localhost:8888/index.php?r=site/index
-site - контроллер SiteController.php
-index - экшн actionIndex()
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////Конфиги////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//config/web.php
+cookieValidationKey
+//www/config/db.php
+//Префикс для таблиц db
+'tablePrefix' => 'pref_'
 
 
 
@@ -18,6 +15,11 @@ index - экшн actionIndex()
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////////MVC//////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+//URL
+http://localhost:8888/index.php?r=site/index
+site - контроллер SiteController.php
+index - экшн actionIndex()
+
 //Контроллер - controllers/SiteController.php
 //http://localhost:8888/index.php?r=site/hello&name=vasya
 public function actionHello($name = "World")
@@ -262,3 +264,197 @@ class Hello extends Widget
 use app\components\Hello;
 ?>
 <h1><?= Hello::widget(['message' => 'Hello, World!']); ?></h1>
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////////Active Record постобработка///////////////////////
+//////////////////////////////////////////////////////////////////////////
+public function afterFind(){
+     $this->img = "path/to/file/" . $this->img . ".png";
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////Подключение CSS и JavaScript//////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//Файлы
+www/web/css/ie.css
+www/web/css/main.css
+www/web/js/file.js
+assets/AppAsset.php
+assets/MyAppAsset.php
+
+//assets/AppAsset.php
+public $basePath = '@webroot';
+public $baseUrl = '@web';
+public $depends = [
+    'yii\web\YiiAsset',
+    'yii\bootstrap\BootstrapAsset',
+    'app\assets\MyAppAsset',
+];
+
+public $css = [
+    'css/ie.css',
+];
+public $cssOptions = [
+    //аттрибут condition для тэга link
+    'condition' => 'lte IE8'
+];
+public $js = [
+    'js/file.js',
+    '//vk.com/js/api/openapi.js',
+];
+
+//assets/MyAppAsset.php
+//Чтобы main.css был без condition="lte IE8"
+namespace app\assets;
+use yii\web\AssetBundle;
+class MyAppAsset extends AssetBundle
+{
+    public $basePath = '@webroot';
+    public $baseUrl = '@web';
+    public $css = [
+        'css/main.css',
+    ];
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////Методы и переменные представления/////////////////////
+//////////////////////////////////////////////////////////////////////////
+$content;
+$action;
+$this->title = 'Page title';
+$this->registerMetaTag([
+    'name' => 'description',
+    'content' => 'here goes the description',
+]);
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////Поиск по сайту/////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//Форма для поиска
+//models/SearchForm.php
+namespace app\models;
+use yii\base\Model;
+class SearchForm extends Model
+{
+    public $q;
+    public function rules()
+    {
+        return [
+            ['q', 'string']
+        ];
+    }
+}
+
+//Вьюшка
+<?php use yii\widgets\ActiveForm; ?>
+<?php use yii\models\SearchForm; ?>
+<?php $model = new SearchFom(); ?>
+<?php $form = ActiveForm::begin(); ?>
+<?= $form->field($model, 'q')->textInput(['class'=>'input'])->label(''); ?>
+<?php ActiveForm::end(); ?>
+
+
+//SiteController.php
+//Получение запроса из формы поиска
+public function beforeAction($action)
+{
+    $model = new SearchForm();
+    if($model->load(Yii::$app->request->post()) && $model->validate()){
+        $q = Html::encode($model->q);
+        return $this->redirect(Yii::$app->urlManager->createUrl(['site/search', 'q' => $q]));
+    }
+    return  true;
+}
+
+//Страница поиска
+public function actionSearch()
+{
+    $a = Yii::$app->getRequest()->getQueryParam('q');
+    //...
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////////ЧПУ///////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//config/web.php
+'components' => [
+    'request' => [
+        'cookieValidationKey' => 'qwertyasdfghqwrty',
+        //Чтобы убрать слово web из url
+        'baseUrl' => '',
+    ]
+],
+'urlManager' => [
+     'enablePrettyUrl' => true,
+    //Убрать index.php
+    'showScriptName' => false,
+    'rules' => [
+        [
+            'class' => 'app\components\SefRule',
+            'connectionID' => 'db',
+        ],
+    ],
+],
+
+//www/.htaccess
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/(web)
+RewriteRule (.*) /web/$1
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /web/index.php
+
+//www/web/.htaccess
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php
+
+//components/SefRule.php
+namespace app\components;
+
+use yii\web\UrlRule;
+use app\models\Sef;
+
+class SefRule extends UrlRule
+{
+    public $connectionID = 'db';
+
+    public function init()
+    {
+        if($this->name === null){
+            $this->name = __CLASS__;
+        }
+    }
+
+    public function createUrl($manager, $route, $params)
+    {
+        if($route == 'site/index') return "";
+        if($route == 'site/search') return "search.html?q=" . $params["q"];
+        $link = $route;
+        if(count($params)){
+
+        }
+    }
+
+}

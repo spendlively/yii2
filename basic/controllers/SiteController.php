@@ -253,4 +253,9 @@ class SiteController extends Controller
     {
         return $this->render('widget');
     }
+
+    public function actionSef()
+    {
+        return $this->render('sef');
+    }
 }
