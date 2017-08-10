@@ -419,6 +419,7 @@ public function actionSearch()
     ]
 ],
 'urlManager' => [
+    //Сделать /site/action вместо &r=site/action
      'enablePrettyUrl' => true,
     //Убрать index.php
     'showScriptName' => false,
