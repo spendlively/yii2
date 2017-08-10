@@ -53,8 +53,17 @@ class MyForm extends \yii\base\Model
     {
 
         return [
-            [['name', 'email'], 'required', 'message' => 'Не заполнено поле'],
-            ['email', 'email', 'message' => 'Некорректный email адрес'],
+            //[ Аттрибуты, Тип валидатора, Сценарий ]
+            [
+                ['name', 'email'],
+                'required',
+                'message' => 'Не заполнено поле'
+            ],
+            [
+                'email',
+                'email',
+                'message' => 'Некорректный email адрес'
+            ],
         ];
     }
 }
@@ -66,8 +75,13 @@ public function actionForm()
     $name = '';
     $email = '';
 
-    if($form->load(Yii::$app->request->post()) && $form->validate()){
-
+    if(
+        //Загрузка данных в объект формы из $_POST
+        $form->load(Yii::$app->request->post()) &&
+        //Валидация
+        $form->validate())
+    {
+        //htmlspecialchars($form->name)
         $name = \yii\helpers\Html::encode($form->name);
         $email = \yii\helpers\Html::encode($form->email);
     }
@@ -458,3 +472,15 @@ class SefRule extends UrlRule
     }
 
 }
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////////ССЫЛКИ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//Модели
+http://yiiframework.domain-na.me/doc/guide/2.0/ru/structure-models
+//Html-хелпер
+http://yiiframework.domain-na.me/doc/guide/2.0/ru/helper-html
