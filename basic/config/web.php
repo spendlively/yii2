@@ -12,19 +12,19 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'wertyiasdfghkxcvbnm',
             //Чтобы убрать слово web из url
-            'baseUrl' => '',
+//            'baseUrl' => '',
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            //Убрать index.php
-            'showScriptName' => false,
-            'rules' => [
-                [
-                    'class' => 'app\components\SefRule',
-                    'connectionID' => 'db',
-                ],
-            ],
-        ],
+//        'urlManager' => [
+//            'enablePrettyUrl' => true,
+//            //Убрать index.php
+//            'showScriptName' => false,
+//            'rules' => [
+//                [
+//                    'class' => 'app\components\SefRule',
+//                    'connectionID' => 'db',
+//                ],
+//            ],
+//        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

@@ -40,6 +40,25 @@ public function actionHello($name = "World")
 //////////////////////////////////////////////////////////////////////////
 ///////////////////////////////FORMS//////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+//models/MyForm.php
+namespace app\models;
+
+class MyForm extends \yii\base\Model
+{
+
+    public $name;
+    public $email;
+
+    public function rules()
+    {
+
+        return [
+            [['name', 'email'], 'required', 'message' => 'Не заполнено поле'],
+            ['email', 'email', 'message' => 'Некорректный email адрес'],
+        ];
+    }
+}
+
 //controllers/SiteController.php
 public function actionForm()
 {
@@ -58,25 +77,6 @@ public function actionForm()
         'name' => $name,
         'email' => $email,
     ]);
-}
-
-//models/MyForm.php
-namespace app\models;
-
-class MyForm extends \yii\base\Model
-{
-
-    public $name;
-    public $email;
-
-    public function rules()
-    {
-
-        return [
-            [['name', 'email'], 'required', 'message' => 'Не заполнено поле'],
-            ['email', 'email', 'message' => 'Некорректный email адрес'],
-        ];
-    }
 }
 
 //views/site/form.php
