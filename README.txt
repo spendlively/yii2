@@ -1,3 +1,21 @@
+//////////////////////////////////////////////////////////////////////////
+////////////////////Установка с помощью Composer//////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//install composer
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+//install yii plugins
+php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
+//install yii basic
+php composer.phar create-project yiisoft/yii2-app-basic basic 2.0.12
+//install yii advanced
+php composer.phar create-project yiisoft/yii2-app-advanced advanced 2.0.12
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 ///////////////////////////////Конфиги////////////////////////////////////
