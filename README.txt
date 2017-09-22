@@ -503,3 +503,21 @@ class SefRule extends UrlRule
 http://yiiframework.domain-na.me/doc/guide/2.0/ru/structure-models
 //Html-хелпер
 http://yiiframework.domain-na.me/doc/guide/2.0/ru/helper-html
+
+
+
+
+
+//Режим разработчика (включает отладочную панель внизу страницы)
+web/index.php
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+defined('YII_ENV') or define('YII_ENV', 'dev');
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////Gii/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/index.php?r=gii
